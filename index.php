@@ -34,11 +34,11 @@ $url = new moodle_url('/local/statisticsuc/index.php', array('parent' => $parent
 if ($parent) {
     $DB->record_exists('course_categories', array('id' => $parent), '*', MUST_EXIST);
     $context = context_coursecat::instance($parent);
-    $title = 'Статистика по курсам для категории «' .
-            $DB->get_field('course_categories', 'name', array('id' => $parent)) . '»';
+    $title = get_string('statisticcoursescat', 'local_statisticsuc',
+            $DB->get_field('course_categories', 'name', array('id' => $parent)));
 } else {
     $context = context_system::instance();
-    $title = 'Статистика по курсам';
+    $title = get_string('statisticcourses', 'local_statisticsuc');
 }
 
 $PAGE->set_pagelayout('admin');
@@ -74,7 +74,7 @@ $usersData[] = [
 ];
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading('Статистика по пользователями');
+echo $OUTPUT->heading(get_string('statisticusers', 'local_statisticsuc'));
 
 $usersTable = new html_table();
 $usersTable->head = [
@@ -104,7 +104,7 @@ $select = html_writer::select($options, 'parent', $parent, false, array('onchang
 $noscript = html_writer::tag('noscript', html_writer::tag('input', null, array(
         'type'  => 'submit',
         'name'  => 'submit',
-        'value' => 'Отфильтровать'
+        'value' => get_string('filter', 'local_statisticsuc')
 )));
 echo html_writer::tag('form', $select . $noscript, array('method' => 'get'));
 
@@ -125,8 +125,8 @@ $coursesData[] = [
 
 $coursesTable = new html_table();
 $coursesTable->head = [
-        'Характеристика',
-        'Значение'
+        get_string('parameter', 'local_statisticsuc'),
+        get_string('value', 'local_statisticsuc')
 ];
 $coursesTable->align = [
         'left',

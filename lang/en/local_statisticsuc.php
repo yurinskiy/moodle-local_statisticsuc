@@ -27,20 +27,30 @@ $string['pluginname'] = 'Statistics on users and courses';
 $string['assistants'] = 'Assistant';
 $string['assistants_help'] = 'Users who have assistant role at least in one course';
 
-$string['courses'] = 'Курсы';
-$string['courses_help'] = 'Курсы, созданные на портале, включая скрытые';
+$string['courses'] = 'Courses';
+$string['courses_help'] = 'Courses created in the portal, including hidden courses';
 
-$string['coursesvisible'] = 'Опубликованные курсы';
-$string['coursesvisible_help'] = 'Опубликованные курсы, созданные на портале';
+$string['coursesvisible'] = 'Published courses';
+$string['coursesvisible_help'] = 'Published courses created in the Moodle';
 
-$string['courseshidden'] = 'Скрытые курсы';
-$string['courseshidden_help'] = 'Скрытые курсы, созданные на портале';
+$string['courseshidden'] = 'Hidden courses';
+$string['courseshidden_help'] = 'Hidden courses created in the Moodle';
+
+$string['filter'] = 'Filter';
+
+$string['parameter'] = 'Parameter';
 
 $string['students'] = 'Students';
 $string['students_help'] = 'Users who have student role at least in one course';
 
+$string['statisticcourses'] = 'Statistics by courses';
+$string['statisticcoursescat'] = 'Statistics on courses for the category «{$a}»';
+$string['statisticusers'] = 'Statistics by users';
+
 $string['teachers'] = 'Teachers';
 $string['teachers_help'] = 'Users who have teacher role at least in one course';
+
+$string['value'] = 'Value';
 
 $string['users'] = 'Users';
 $string['users_help'] = 'All users including suspended';
