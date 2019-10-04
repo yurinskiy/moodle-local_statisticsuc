@@ -26,77 +26,121 @@ require('./locallib.php');
 
 require_login();
 
+$parent = optional_param('parent', 0, PARAM_INT);
+
 $context = context_system::instance();
+
+$url = new moodle_url('/local/statisticsuc/index.php', array('parent' => $parent));
+if ($parent) {
+    $DB->record_exists('course_categories', array('id' => $parent), '*', MUST_EXIST);
+    $context = context_coursecat::instance($parent);
+    $title = 'Статистика по курсам для категории «' .
+            $DB->get_field('course_categories', 'name', array('id' => $parent)) . '»';
+} else {
+    $context = context_system::instance();
+    $title = 'Статистика по курсам';
+}
 
 $PAGE->set_pagelayout('admin');
 $PAGE->set_context($context);
-$PAGE->set_url('/local/statisticsuc/index.php', ['contextid' => $context->id]);
+$PAGE->set_url($url);
 $PAGE->set_title(get_string('pluginname', 'local_statisticsuc'));
 
-$data = [];
+navigation_node::override_active_url(new moodle_url('/local/statisticsuc/index.php'), array('parent' => $parent));
 
-$usercount = get_users(false);
-$data[] = [
+$usersData[] = [
         get_string('users', 'local_statisticsuc') . $OUTPUT->help_icon('users', 'local_statisticsuc'),
-        $usercount
+        get_users(false)
 ];
 
-$data[] = [
+$usersData[] = [
         get_string('userswithoutsuspended', 'local_statisticsuc') .
         $OUTPUT->help_icon('userswithoutsuspended', 'local_statisticsuc'),
         local_statisticsuc_count_users_suspended()
 ];
 
-$data[] = [
+$usersData[] = [
         get_string('teachers', 'local_statisticsuc') . $OUTPUT->help_icon('teachers', 'local_statisticsuc'),
         local_statisticsuc_count_users_have_role(ROLE_TEACHER)
 ];
 
-$data[] = [
+$usersData[] = [
         get_string('assistants', 'local_statisticsuc') . $OUTPUT->help_icon('assistants', 'local_statisticsuc'),
         local_statisticsuc_count_users_have_role(ROLE_ASSISTANT)
 ];
-$data[] = [
+$usersData[] = [
         get_string('students', 'local_statisticsuc') . $OUTPUT->help_icon('students', 'local_statisticsuc'),
         local_statisticsuc_count_users_have_role(ROLE_STUDENT)
 ];
 
-$data[] = [
-        '',
-        ''
-];
+echo $OUTPUT->header();
+echo $OUTPUT->heading('Статистика по пользователями');
 
-$coursescount = local_statisticsuc_count_courses();
-$data[] = [
+$usersTable = new html_table();
+$usersTable->head = [
+        'Характеристика',
+        'Значение'
+];
+$usersTable->align = [
+        'left',
+        'center',
+];
+$usersTable->size = [
+        '80%',
+        '20%',
+];
+$usersTable->id = 'statisticUser';
+$usersTable->attributes['class'] = 'admintable generaltable';
+$usersTable->data = $usersData;
+
+echo html_writer::table($usersTable);
+
+echo $OUTPUT->heading($title);
+
+$options = array();
+$options[0] = get_string('top');
+$options += core_course_category::make_categories_list('moodle/category:manage');
+$select = html_writer::select($options, 'parent', $parent, false, array('onchange' => 'this.form.submit()'));
+$noscript = html_writer::tag('noscript', html_writer::tag('input', null, array(
+        'type'  => 'submit',
+        'name'  => 'submit',
+        'value' => 'Отфильтровать'
+)));
+echo html_writer::tag('form', $select . $noscript, array('method' => 'get'));
+
+$coursescount = local_statisticsuc_count_courses($parent);
+
+$coursesData[] = [
         get_string('courses', 'local_statisticsuc') . $OUTPUT->help_icon('courses', 'local_statisticsuc'),
         $coursescount->all
 ];
-$data[] = [
+$coursesData[] = [
         get_string('coursesvisible', 'local_statisticsuc') . $OUTPUT->help_icon('coursesvisible', 'local_statisticsuc'),
         $coursescount->visible
 ];
-$data[] = [
+$coursesData[] = [
         get_string('courseshidden', 'local_statisticsuc') . $OUTPUT->help_icon('courseshidden', 'local_statisticsuc'),
         $coursescount->hidden
 ];
 
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'local_statisticsuc'));
-
-$table = new html_table();
-$table->head = [
-        '',
-        'Количество'
+$coursesTable = new html_table();
+$coursesTable->head = [
+        'Характеристика',
+        'Значение'
 ];
-$table->colclasses = [
-        'leftalign',
-        'leftalign',
+$coursesTable->align = [
+        'left',
+        'center',
 ];
-$table->id = 'statistic';
-$table->attributes['class'] = 'admintable generaltable';
-$table->data = $data;
+$coursesTable->size = [
+        '80%',
+        '20%',
+];
+$coursesTable->id = 'statisticUser';
+$coursesTable->attributes['class'] = 'admintable generaltable';
+$coursesTable->data = $coursesData;
 
-echo html_writer::table($table);
+echo html_writer::table($coursesTable);
 
 echo $OUTPUT->footer();
 

@@ -29,29 +29,53 @@ define('ROLE_ASSISTANT', 4);
 define('ROLE_STUDENT', 5);
 
 /**
+ * @param int $category
  * @return StdClass
  */
-function local_statisticsuc_count_courses() {
+function local_statisticsuc_count_courses($category = 0) {
     global $DB;
 
     $result = new StdClass();
-    /*$sql = 'SELECT COUNT(*) FROM (
-        SELECT DISTINCT ue.userid, e.courseid
-        FROM {user_enrolments} ue, {enrol} e, {course} c
-        WHERE ue.enrolid = e.id
-            AND e.courseid <> :siteid
-            AND c.id = e.courseid
-            AND c.visible = 1) total';
-    $params = array('siteid' => $SITE->id);
-    $enrolmenttotal = $DB->count_records_sql($sql, $params);*/
 
-    $result->visible = $DB->count_records('course', [
-            'visible' => 1
-    ]) - 1;
+    if ($category == 0) {
+        $result->visible = $DB->count_records('course', [
+                        'visible' => 1
+                ]) - 1;
 
-    $result->hidden = $DB->count_records('course', [
-            'visible' => 0
-    ]);
+        $result->hidden = $DB->count_records('course', [
+                'visible' => 0
+        ]);
+    } else {
+        $result->visible = $DB->count_records('course', [
+                'visible'  => 1,
+                'category' => $category
+        ]);
+
+        $result->hidden = $DB->count_records('course', [
+                'visible'  => 0,
+                'category' => $category
+        ]);
+
+        $records = $DB->get_records('course_categories', [
+                'parent' => $category
+        ]);
+
+        while (count($records) > 0) {
+            $record = array_shift($records);
+            $result->visible += $DB->count_records('course', [
+                    'visible'  => 1,
+                    'category' => $record->id
+            ]);
+
+            $result->hidden += $DB->count_records('course', [
+                    'visible'  => 0,
+                    'category' => $record->id
+            ]);
+            $records += $DB->get_records('course_categories', [
+                    'parent' => $record->id
+            ]);
+        }
+    }
 
     $result->all = $result->visible + $result->hidden;
 
@@ -88,24 +112,6 @@ function local_statisticsuc_count_users_have_role($courserole) {
     $params = [
             'suspended'  => 0,
             'courserole' => $courserole
-    ];
-    $result = get_users(false, '', false, null, "", '', '', '', '', '*', $extrasql, $params);
-
-    if (is_numeric($result)) {
-        return $result;
-    }
-
-    return 0;
-}
-
-/**
- * @param $timestamp
- * @return int
- */
-function local_statisticsuc_count_users_created_at($timestamp) {
-    $extrasql = 'suspended=:suspended AND timecreated >= ' . $timestamp;
-    $params = [
-            'suspended' => 0
     ];
     $result = get_users(false, '', false, null, "", '', '', '', '', '*', $extrasql, $params);
 
