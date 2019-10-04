@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2019100100;
+$plugin->version   = 2019100400;
 $plugin->requires  = 2018120300;
 $plugin->component = 'local_statisticsuc';
 $plugin->maturity = MATURITY_BETA;
