@@ -26,6 +26,11 @@ require('./locallib.php');
 
 require_login();
 
+if(!is_siteadmin()) {
+    header("Location: " . $CFG->wwwroot);
+    die();
+}
+
 $parent = optional_param('parent', 0, PARAM_INT);
 
 $context = context_system::instance();
