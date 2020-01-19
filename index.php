@@ -26,7 +26,7 @@ require('./locallib.php');
 
 require_login();
 
-if(!is_siteadmin()) {
+if (!is_siteadmin()) {
     header("Location: " . $CFG->wwwroot);
     die();
 }
@@ -40,7 +40,7 @@ if ($parent) {
     $DB->record_exists('course_categories', array('id' => $parent), '*', MUST_EXIST);
     $context = context_coursecat::instance($parent);
     $title = get_string('statisticcoursescat', 'local_statisticsuc',
-            $DB->get_field('course_categories', 'name', array('id' => $parent)));
+        $DB->get_field('course_categories', 'name', array('id' => $parent)));
 } else {
     $context = context_system::instance();
     $title = get_string('statisticcourses', 'local_statisticsuc');
@@ -54,28 +54,28 @@ $PAGE->set_title(get_string('pluginname', 'local_statisticsuc'));
 navigation_node::override_active_url(new moodle_url('/local/statisticsuc/index.php'), array('parent' => $parent));
 
 $usersData[] = [
-        get_string('users', 'local_statisticsuc') . $OUTPUT->help_icon('users', 'local_statisticsuc'),
-        get_users(false)
+    get_string('users', 'local_statisticsuc') . $OUTPUT->help_icon('users', 'local_statisticsuc'),
+    local_statisticsuc_count_users(true)
 ];
 
 $usersData[] = [
-        get_string('userswithoutsuspended', 'local_statisticsuc') .
-        $OUTPUT->help_icon('userswithoutsuspended', 'local_statisticsuc'),
-        local_statisticsuc_count_users_suspended()
+    get_string('userswithoutsuspended', 'local_statisticsuc') .
+    $OUTPUT->help_icon('userswithoutsuspended', 'local_statisticsuc'),
+    local_statisticsuc_count_users(false)
 ];
 
 $usersData[] = [
-        get_string('teachers', 'local_statisticsuc') . $OUTPUT->help_icon('teachers', 'local_statisticsuc'),
-        local_statisticsuc_count_users_have_role(ROLE_TEACHER)
+    get_string('teachers', 'local_statisticsuc') . $OUTPUT->help_icon('teachers', 'local_statisticsuc'),
+    local_statisticsuc_count_users_have_role(ROLE_TEACHER)
 ];
 
 $usersData[] = [
-        get_string('assistants', 'local_statisticsuc') . $OUTPUT->help_icon('assistants', 'local_statisticsuc'),
-        local_statisticsuc_count_users_have_role(ROLE_ASSISTANT)
+    get_string('assistants', 'local_statisticsuc') . $OUTPUT->help_icon('assistants', 'local_statisticsuc'),
+    local_statisticsuc_count_users_have_role(ROLE_ASSISTANT)
 ];
 $usersData[] = [
-        get_string('students', 'local_statisticsuc') . $OUTPUT->help_icon('students', 'local_statisticsuc'),
-        local_statisticsuc_count_users_have_role(ROLE_STUDENT)
+    get_string('students', 'local_statisticsuc') . $OUTPUT->help_icon('students', 'local_statisticsuc'),
+    local_statisticsuc_count_users_have_role(ROLE_STUDENT)
 ];
 
 echo $OUTPUT->header();
@@ -83,16 +83,16 @@ echo $OUTPUT->heading(get_string('statisticusers', 'local_statisticsuc'));
 
 $usersTable = new html_table();
 $usersTable->head = [
-        'Характеристика',
-        'Значение'
+    'Характеристика',
+    'Значение'
 ];
 $usersTable->align = [
-        'left',
-        'center',
+    'left',
+    'center',
 ];
 $usersTable->size = [
-        '80%',
-        '20%',
+    '80%',
+    '20%',
 ];
 $usersTable->id = 'statisticUser';
 $usersTable->attributes['class'] = 'admintable generaltable';
@@ -107,39 +107,53 @@ $options[0] = get_string('top');
 $options += core_course_category::make_categories_list('moodle/category:manage');
 $select = html_writer::select($options, 'parent', $parent, false, array('onchange' => 'this.form.submit()'));
 $noscript = html_writer::tag('noscript', html_writer::tag('input', null, array(
-        'type'  => 'submit',
-        'name'  => 'submit',
-        'value' => get_string('filter', 'local_statisticsuc')
+    'type' => 'submit',
+    'name' => 'submit',
+    'value' => get_string('filter', 'local_statisticsuc')
 )));
 echo html_writer::tag('form', $select . $noscript, array('method' => 'get'));
 
 $coursescount = local_statisticsuc_count_courses($parent);
 
 $coursesData[] = [
-        get_string('courses', 'local_statisticsuc') . $OUTPUT->help_icon('courses', 'local_statisticsuc'),
-        $coursescount->all
+    get_string('courses', 'local_statisticsuc') . $OUTPUT->help_icon('courses', 'local_statisticsuc'),
+    $coursescount->all
 ];
 $coursesData[] = [
-        get_string('coursesvisible', 'local_statisticsuc') . $OUTPUT->help_icon('coursesvisible', 'local_statisticsuc'),
-        $coursescount->visible
+    get_string('coursesvisible', 'local_statisticsuc') . $OUTPUT->help_icon('coursesvisible', 'local_statisticsuc'),
+    $coursescount->visible
 ];
 $coursesData[] = [
-        get_string('courseshidden', 'local_statisticsuc') . $OUTPUT->help_icon('courseshidden', 'local_statisticsuc'),
-        $coursescount->hidden
+    get_string('courseshidden', 'local_statisticsuc') . $OUTPUT->help_icon('courseshidden', 'local_statisticsuc'),
+    $coursescount->hidden
+];
+
+$coursesData[] = [
+    get_string('teachers', 'local_statisticsuc') . $OUTPUT->help_icon('teachers', 'local_statisticsuc'),
+    $coursescount->teacher ?? 0
+];
+
+$coursesData[] = [
+    get_string('assistants', 'local_statisticsuc') . $OUTPUT->help_icon('assistants', 'local_statisticsuc'),
+    $coursescount->assistant ?? 0
+];
+$coursesData[] = [
+    get_string('students', 'local_statisticsuc') . $OUTPUT->help_icon('students', 'local_statisticsuc'),
+    $coursescount->student ?? 0
 ];
 
 $coursesTable = new html_table();
 $coursesTable->head = [
-        get_string('parameter', 'local_statisticsuc'),
-        get_string('value', 'local_statisticsuc')
+    get_string('parameter', 'local_statisticsuc'),
+    get_string('value', 'local_statisticsuc')
 ];
 $coursesTable->align = [
-        'left',
-        'center',
+    'left',
+    'center',
 ];
 $coursesTable->size = [
-        '80%',
-        '20%',
+    '80%',
+    '20%',
 ];
 $coursesTable->id = 'statisticUser';
 $coursesTable->attributes['class'] = 'admintable generaltable';
