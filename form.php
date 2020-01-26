@@ -48,9 +48,6 @@ class local_statisticsuc_form extends moodleform
         $mform->addElement('select', 'parent', get_string('categories'), $options);
         $mform->setDefault('parent', $this->_customdata['parent']);
 
-        $mform->addElement('date_selector', 'date_beg', get_string('to'));
-        $mform->addElement('date_selector', 'date_end', get_string('to'));
-
         $this->add_action_buttons(false, get_string('filter', 'local_statisticsuc'));
     }
 }

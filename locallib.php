@@ -176,6 +176,7 @@ SELECT COUNT(DISTINCT u.id)
 
 /**
  * @param int $courserole
+ * @param $category
  * @return array
  * @throws dml_exception
  */

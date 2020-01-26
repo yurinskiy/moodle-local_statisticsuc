@@ -27,27 +27,32 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * To add the category and node information into the my profile page.
  *
- * @param $settingsnav
- * @param $context
+ * @param settings_navigation $settingsnav
+ * @param context $context
  * @return void
+ * @throws coding_exception
+ * @throws moodle_exception
  */
-function local_statisticsuc_extend_settings_navigation($settingsnav, $context) {
-    global $CFG, $PAGE;
+function local_statisticsuc_extend_settings_navigation($settingsnav, $context)
+{
+    global $PAGE;
 
-    if (is_siteadmin() && $settingnode = $settingsnav->find('reports', navigation_node::TYPE_SETTING)) {
-        $strfoo = get_string('pluginname','local_statisticsuc');
-        $url = new moodle_url('/local/statisticsuc/index.php');
-        $foonode = navigation_node::create(
+    if (is_siteadmin() || has_capability('local/statisticsuc:view', $context)) {
+        if ($settingnode = $settingsnav->find('reports', navigation_node::TYPE_SETTING)) {
+            $strfoo = get_string('pluginname', 'local_statisticsuc');
+            $url = new moodle_url('/local/statisticsuc/index.php');
+            $foonode = navigation_node::create(
                 $strfoo,
                 $url,
                 navigation_node::TYPE_SETTING,
                 'statisticsuc',
                 'statisticsuc',
                 new pix_icon('i/settings', $strfoo)
-        );
-        if ($PAGE->url->compare($url, URL_MATCH_BASE)) {
-            $foonode->make_active();
+            );
+            if ($PAGE->url->compare($url, URL_MATCH_BASE)) {
+                $foonode->make_active();
+            }
+            $settingnode->add_node($foonode);
         }
-        $settingnode->add_node($foonode);
     }
 }
