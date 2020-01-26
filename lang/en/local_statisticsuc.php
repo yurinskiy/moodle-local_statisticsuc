@@ -23,6 +23,7 @@
  */
 
 $string['pluginname'] = 'Statistics on users and courses';
+$string['statisticsuc:view'] = 'View statistics on users and courses';
 
 $string['assistants'] = 'Assistant';
 $string['assistants_help'] = 'Users who have assistant role at least in one course';

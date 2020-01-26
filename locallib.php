@@ -32,8 +32,11 @@ define('CONTEXT_COURSECAT', 40);
 define('CONTEXT_COURSE', 50);
 
 /**
+ * Возвращает информацию о категории
+ *
  * @param int $category
  * @return StdClass
+ * @throws dml_exception
  */
 function local_statisticsuc_count_courses($category = 0)
 {
@@ -109,6 +112,7 @@ function local_statisticsuc_count_courses($category = 0)
  *
  * @param bool $withSuspended - если FALSE, то считает только незаблокированных пользователей
  * @return int
+ * @throws dml_exception
  */
 function local_statisticsuc_count_users($withSuspended = false)
 {
@@ -134,6 +138,7 @@ function local_statisticsuc_count_users($withSuspended = false)
 /**
  * @param int $courserole
  * @return int
+ * @throws dml_exception
  */
 function local_statisticsuc_count_users_have_role($courserole)
 {
@@ -172,6 +177,7 @@ SELECT COUNT(DISTINCT u.id)
 /**
  * @param int $courserole
  * @return array
+ * @throws dml_exception
  */
 function local_statisticsuc_users_have_role($courserole, $category)
 {
