@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * Plugin capabilities
  *
  * @package   local_statisticsuc
  * @copyright 2019, YuriyYurinskiy <yuriyyurinskiy@yandex.ru>
@@ -24,8 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2020012600;
-$plugin->requires  = 2018120300;
-$plugin->component = 'local_statisticsuc';
-$plugin->maturity = MATURITY_BETA;
-$plugin->release = '0.0.4';
+$capabilities = array(
+    'local/statisticsuc:view' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSECAT,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        ),
+    )
+);
